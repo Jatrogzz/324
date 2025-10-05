@@ -25,6 +25,19 @@ document.querySelectorAll(".selector_option").forEach((option) => {
 
 var upload = document.querySelector(".upload");
 
+// Check if user already has data and redirect to home if they do
+window.addEventListener('load', () => {
+    try {
+        const hasData = localStorage.getItem('mObywatel_hasData');
+        if (hasData === 'true') {
+            console.log('User has existing data, redirecting to home');
+            location.href = 'home.html';
+        }
+    } catch (error) {
+        console.warn('Could not check for existing data:', error);
+    }
+});
+
 var imageInput = document.createElement("input");
 imageInput.type = "file";
 imageInput.accept = ".jpeg,.png,.gif";
@@ -146,8 +159,15 @@ document.querySelector(".go").addEventListener('click', () => {
         }
         
         try {
-            localStorage.setItem('mObywatel_formData', JSON.stringify(formData));
-            console.log('Form data stored in localStorage');
+            // Store with timestamp for better persistence
+            const dataWithTimestamp = {
+                data: formData,
+                timestamp: Date.now(),
+                version: '1.0'
+            };
+            localStorage.setItem('mObywatel_formData', JSON.stringify(dataWithTimestamp));
+            localStorage.setItem('mObywatel_hasData', 'true');
+            console.log('Form data stored in localStorage with timestamp');
         } catch (error) {
             console.warn('localStorage failed, using URL params:', error);
         }

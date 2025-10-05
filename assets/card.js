@@ -74,7 +74,9 @@ if (params.toString() === '') {
   try {
     const storedData = localStorage.getItem('mObywatel_formData');
     if (storedData) {
-      const formData = JSON.parse(storedData);
+      const parsedData = JSON.parse(storedData);
+      // Handle both old and new format
+      const formData = parsedData.data || parsedData;
       for (const [key, value] of Object.entries(formData)) {
         data[key] = value;
       }

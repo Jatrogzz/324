@@ -6,7 +6,9 @@ if (params.toString() === '') {
     try {
         const storedData = localStorage.getItem('mObywatel_formData');
         if (storedData) {
-            const formData = JSON.parse(storedData);
+            const parsedData = JSON.parse(storedData);
+            // Handle both old and new format
+            const formData = parsedData.data || parsedData;
             params = new URLSearchParams();
             for (const [key, value] of Object.entries(formData)) {
                 params.set(key, value);
@@ -49,7 +51,13 @@ function toHome(){
             for (const [key, value] of params.entries()) {
                 formData[key] = value;
             }
-            localStorage.setItem('mObywatel_formData', JSON.stringify(formData));
+            const dataWithTimestamp = {
+                data: formData,
+                timestamp: Date.now(),
+                version: '1.0'
+            };
+            localStorage.setItem('mObywatel_formData', JSON.stringify(dataWithTimestamp));
+            localStorage.setItem('mObywatel_hasData', 'true');
             location.href = 'home.html';
             return;
         }
